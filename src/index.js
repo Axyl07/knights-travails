@@ -1,82 +1,111 @@
-function knightMoves([originalRow, originalCol], [targetRow, targetCol]) {
+// function knightMoves([originalRow, originalCol], [targetRow, targetCol]) {
+//   let originalCell = [originalRow, originalCol];
+//   let targetCell = [targetRow, targetCol];
+//   //Invalid position Checks
+//   if (originalRow < 0 || originalRow > 7) {
+//     console.log("Invalid position");
+//   } else if (originalCol < 0 || originalCol > 7) {
+//     console.log("Invalid position");
+//   } else if (targetRow < 0 || targetRow > 7) {
+//     console.log("Invalid position");
+//   } else if (targetCol < 0 || targetCol > 7) {
+//     console.log("Invalid position");
+//   } else {
+//     let movesCount = 0;
+//     let finalMoves = [];
+//     finalMoves.push(originalCell);
+//     const validMoveOG = getValidMoves(originalCell);
+//     console.log(validMoveOG);
+//     if (check(validMoveOG,targetCell)) {
+//       movesCount++;
+//     }
+
+// if (movesCount === 1) {
+//     finalMoves.push(targetCell);
+//     console.log(
+//       `You made it in ${movesCount} move!  Here's your path: [${finalMoves[0]}] [${finalMoves[1]}]`,
+//     );
+//     //when path is not found in one move : 
+// } else {
+//   //somehow store paths in each different array
+//   let arr = [];
+//   validMoveOG.forEach(element => {
+//     const validMoveArray = getValidMoves(element);
+//     //left here asdad1123`3`
+    
+//     arr.push(validMoveArray);
+//   });
+//   console.log(arr);
+//   arr.forEach(subArray => {
+//     subArray.map(individualArray => {
+//       if (check(individualArray, targetCell)) {
+//         movesCount++;
+//         console.log('done')
+//       }
+//     })
+//   });
+// }
+//     // console.log(validMoveOG[index]);
+      
+//   }
+// }
+
+// function getPath(ogCell, targetCell) {
+//   let tracker = []
+//   // if (tracker.includes(ogCell)) {
+//   //   tracker = tracker.filter(element=>element!=ogCell)
+//   // }
+//   // // let tracker = []
+//   tracker.push(ogCell);
+//   let ogMoves = getValidMoves(ogCell);
+//   // if (ogMoves.includes(ogCell)) {
+//   //   ogMoves = ogMoves.filter(value=>value!=ogCell)
+//   // }
+//   if (check(ogMoves, targetCell)) {
+//     return targetCell;
+//   }
+//   else {
+//     ogMoves.forEach(array => {
+//     tracker.push(array);
+//     const moves = getValidMoves(array)
+//     if (check(moves, targetCell)) {
+//       return targetCell;
+//     }
+    
+//   })
+// }
+// }
+
+function getThePath([originalRow, originalCol], [targetRow, targetCol], tracker = [], path = []) {
   let originalCell = [originalRow, originalCol];
   let targetCell = [targetRow, targetCol];
-  //Invalid position Checks
-  if (originalRow < 0 || originalRow > 7) {
-    console.log("Invalid position");
-  } else if (originalCol < 0 || originalCol > 7) {
-    console.log("Invalid position");
-  } else if (targetRow < 0 || targetRow > 7) {
-    console.log("Invalid position");
-  } else if (targetCol < 0 || targetCol > 7) {
-    console.log("Invalid position");
-  } else {
-    let movesCount = 0;
-    let finalMoves = [];
-    finalMoves.push(originalCell);
-    const validMoveOG = getValidMoves(originalCell);
-    console.log(validMoveOG);
-    if (check(validMoveOG,targetCell)) {
-      movesCount++;
-    }
-
-if (movesCount === 1) {
-    finalMoves.push(targetCell);
-    console.log(
-      `You made it in ${movesCount} move!  Here's your path: [${finalMoves[0]}] [${finalMoves[1]}]`,
-    );
-    //when path is not found in one move : 
-} else {
-  //somehow store paths in each different array
-  let arr = [];
-  validMoveOG.forEach(element => {
-    const validMoveArray = getValidMoves(element);
-    //left here asdad1123`3`
-    
-    arr.push(validMoveArray);
-  });
-  console.log(arr);
-  arr.forEach(subArray => {
-    subArray.map(individualArray => {
-      if (check(individualArray, targetCell)) {
-        movesCount++;
-        console.log('done')
-      }
-    })
-  });
-}
-    // console.log(validMoveOG[index]);
-      
-  }
-}
-
-function getPath(ogCell, targetCell) {
-  let tracker = []
-  // if (tracker.includes(ogCell)) {
-  //   tracker = tracker.filter(element=>element!=ogCell)
-  // }
-  // // let tracker = []
-  tracker.push(ogCell);
-  let ogMoves = getValidMoves(ogCell);
-  // if (ogMoves.includes(ogCell)) {
-  //   ogMoves = ogMoves.filter(value=>value!=ogCell)
-  // }
-  if (check(ogMoves, targetCell)) {
-    return targetCell;
+  if (originalCell===targetCell) {
+    path.push(originalCell)
+    path.push(targetCell)
+    return path;
   }
   else {
-    ogMoves.forEach(array => {
-    tracker.push(array);
-    const moves = getValidMoves(array)
-    if (check(moves, targetCell)) {
-      return targetCell;
+    const ogMoves = getValidMoves(originalCell);
+    tracker.push(originalCell);
+    ogMoves.filter((array) => {
+      array!=tracker[tracker.length-1]
+    })
+    if (check(ogMoves)) {
+      path.push(originalCell)
+      path.push(targetCell);
+      return path;
     }
-    
-  })
+    else {
+      for (let index = 0; index < ogMoves.length; index++) {
+        const element = ogMoves[index];
+        return getThePath(element, targetCell, tracker, path);
+      }
+    }
+  }
 }
-}
+console.log(getThePath([0, 0], [1, 1]));
 
-console.log(getPath([0, 0], [1, 1]));
+// console.log(getPath([0, 0], [1, 1]));
 
 function check(array, target) {
   for (let i = 0; i < array.length; i++) {
@@ -143,4 +172,4 @@ function getValidMoves([originalRow, originalCol]) {
   return validMoves;
 }
 
-knightMoves([3, 3], [1, 1]);
+// knightMoves([3, 3], [1, 1]);
