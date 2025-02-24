@@ -25,14 +25,14 @@
 //     console.log(
 //       `You made it in ${movesCount} move!  Here's your path: [${finalMoves[0]}] [${finalMoves[1]}]`,
 //     );
-//     //when path is not found in one move : 
+//     //when path is not found in one move :
 // } else {
 //   //somehow store paths in each different array
 //   let arr = [];
 //   validMoveOG.forEach(element => {
 //     const validMoveArray = getValidMoves(element);
 //     //left here asdad1123`3`
-    
+
 //     arr.push(validMoveArray);
 //   });
 //   console.log(arr);
@@ -46,73 +46,91 @@
 //   });
 // }
 //     // console.log(validMoveOG[index]);
-      
+
 //   }
 // }
 
 // function getPath(ogCell, targetCell) {
+//   let path = []
 //   let tracker = []
-//   // if (tracker.includes(ogCell)) {
-//   //   tracker = tracker.filter(element=>element!=ogCell)
-//   // }
-//   // // let tracker = []
 //   tracker.push(ogCell);
 //   let ogMoves = getValidMoves(ogCell);
-//   // if (ogMoves.includes(ogCell)) {
-//   //   ogMoves = ogMoves.filter(value=>value!=ogCell)
-//   // }
 //   if (check(ogMoves, targetCell)) {
-//     return targetCell;
+//     path.push(ogCell)
+//     path.push(targetCell)
 //   }
 //   else {
-//     ogMoves.forEach(array => {
-//     tracker.push(array);
-//     const moves = getValidMoves(array)
-//     if (check(moves, targetCell)) {
-//       return targetCell;
+//     for (let index = 0; index < ogMoves.length; index++) {
+//       const array = ogMoves[index];
+//       tracker.push(array);
+//       let moves = getValidMoves(array)
+//       let checkingvalue = tracker[tracker.length - 1];
+//       moves = moves.filter((array)=>array!==checkingvalue)
+//       if (check(moves, targetCell)) {
+//         path.push(ogCell)
+//         path.push(array);
+//         path.push(targetCell)
+//       } else {
+//        //what to do if path isn't found in two moves?????
+//       }
+      
 //     }
-    
-//   })
-// }
+//     return path;
+//   }
 // }
 
-function getThePath([originalRow, originalCol], [targetRow, targetCol], tracker = [], path = []) {
-  let originalCell = [originalRow, originalCol];
-  let targetCell = [targetRow, targetCol];
-  if (originalCell===targetCell) {
-    path.push(originalCell)
-    path.push(targetCell)
-    return path;
-  }
-  else {
-    const ogMoves = getValidMoves(originalCell);
-    tracker.push(originalCell);
-    ogMoves.filter((array) => {
-      array!=tracker[tracker.length-1]
-    })
-    if (check(ogMoves)) {
-      path.push(originalCell)
-      path.push(targetCell);
-      return path;
-    }
-    else {
-      for (let index = 0; index < ogMoves.length; index++) {
-        const element = ogMoves[index];
-        return getThePath(element, targetCell, tracker, path);
-      }
+
+function indexOf(array,value) {
+  for (let index = 0; index < array.length; index++) {
+    const element = array[index];
+    if (element[0] === value[0] && element[1] === value[1]) {
+      return index;
     }
   }
 }
-console.log(getThePath([0, 0], [1, 1]));
 
-// console.log(getPath([0, 0], [1, 1]));
+function getThePath(
+  [originalRow, originalCol],
+  [targetRow, targetCol],
+  tracker = [],
+  paths = [],
+) {
+  let originalCell = [originalRow, originalCol];
+  let targetCell = [targetRow, targetCol];
+    let ogMoves = getValidMoves(originalCell);
+  tracker.push(originalCell);
+  for (let index = 0; index < tracker.length; index++) {
+    const value = tracker[index];
+    if (check(ogMoves,value)) {
+      const index = indexOf(ogMoves,value);
+      if (index > -1) {
+        ogMoves.splice(index, 1);
+      }
+    }
+  }
+  if (check(ogMoves, targetCell)) {
+    return originalCell;
+    } else {
+      for (let index = 0; index < ogMoves.length; index++) {
+        const element = ogMoves[index];
+         getThePath(element, targetCell, tracker, paths);
+        tracker.push(targetCell);
+        tracker = tracker.filter((value, index) => indexOf(tracker, value) === index);
+        paths.push(tracker);
+        return paths;
+      }
+    }
+}
+console.log(getThePath([3,3],[0,0]))
+
+
 
 function check(array, target) {
   for (let i = 0; i < array.length; i++) {
     const move = array[i];
-  if (move[0] === target[0] && move[1] === target[1]) {
-    return true;
-} 
+    if (move[0] === target[0] && move[1] === target[1]) {
+      return true;
+    }
   }
   return false;
 }
